@@ -6,3 +6,5 @@ To be able to test the project locally is necessary to install in Visual Studio 
 F1 -> Live Server: Open With Live Server
 
 This way Tensorflow.js can find the image at the path http://127.0.0.1:5500/src/images that could not find locally.
+
+TODO add webpack dependency
