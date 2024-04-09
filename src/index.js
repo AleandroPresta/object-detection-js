@@ -6,27 +6,28 @@ require('@tensorflow/tfjs-backend-webgl');
 const cocoSsd = require('@tensorflow-models/coco-ssd');
 
 (async () => {
-  const img = document.getElementById('img-1');
-  console.log(img)
+  const img1 = document.getElementById('img-1');
+  const img2 = document.getElementById('img-2');
 
   // Load the model.
   const model = await cocoSsd.load();
 
   // Classify the image.
-  const predictions = await model.detect(img);
+  const predictions1 = await model.detect(img1);
+  const predictions2 = await model.detect(img2);
 
-  console.log('Predictions: ');
-  console.log(predictions);
+  console.log('Predictions1: ');
+  console.log(predictions1);
+  console.log('Predictions2: ');
+  console.log(predictions2);
 
-  const image = document.getElementById("img-1");
-
-  for (const detection of predictions){
-      drawBoundingBoxes(image, detection);
-  }
+  drawBoundingBoxes(img1, predictions1);
+  
+  drawBoundingBoxes(img2, predictions2);
 
 })();
 
-function drawBoundingBoxes(image, detection) {
+function drawBoundingBoxes(image, detections) {
   const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
@@ -38,17 +39,20 @@ function drawBoundingBoxes(image, detection) {
   ctx.lineWidth = 2;
   ctx.strokeStyle = 'red';  
 
-  const [x, y, width, height] = detection.bbox;
-  const className = detection.class;
-  const accuracy = detection.score;
+  for (const detection of detections) {
+    const [x, y, width, height] = detection.bbox;
+    const className = detection.class;
+    const accuracy = detection.score;
 
-  ctx.rect(x, y, width, height);
-  ctx.stroke();
-
-  const text = `${className} (${(accuracy * 100).toFixed(2)}%)`;
-  ctx.font = '48px serif'; // Set font size and family
-  ctx.fillStyle = 'red';
-  ctx.fillText(text, x, y);
-
-  image.src = canvas.toDataURL(); // Convert canvas to data URL
+    ctx.rect(x, y, width, height);
+    ctx.stroke();
+  
+    const text = `${className} (${(accuracy * 100).toFixed(2)}%)`;
+    ctx.font = '48px serif'; // Set font size and family
+    ctx.fillStyle = 'red';
+    ctx.fillText(text, x, y);
+  
+    image.src = canvas.toDataURL(); // Convert canvas to data URL
+  }
+  
 }
